@@ -1,9 +1,9 @@
 from random import choice
 
-from nonebot import get_plugin_config, on_notice
+from nonebot import on_notice, get_plugin_config
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event
 from nonebot.adapters.onebot.v11 import GroupBanNoticeEvent
-from nonebot.plugin import PluginMetadata
 
 from .config import Config
 

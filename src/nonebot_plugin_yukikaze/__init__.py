@@ -1,4 +1,4 @@
-from nonebot import logger, require
+from nonebot import require
 from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 
 require("nonebot_plugin_uninfo")
@@ -20,10 +20,11 @@ __plugin_meta__ = PluginMetadata(
     # supported_adapters={"~onebot.v11"}, # 仅 onebot
     extra={"author": "hyouryo 3433609429@qq.com"},
 )
-   
-import nonebot
+
+import os
 from pathlib import Path
-import os 
+
+import nonebot
 
 plugins = os.listdir(Path(__file__).parent / "plugins")
 load_plugins = []
