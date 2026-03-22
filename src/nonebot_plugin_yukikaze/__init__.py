@@ -20,41 +20,22 @@ __plugin_meta__ = PluginMetadata(
     # supported_adapters={"~onebot.v11"}, # 仅 onebot
     extra={"author": "hyouryo 3433609429@qq.com"},
 )
-
-from arclet.alconna import Args, Option, Alconna, Arparma, Subcommand
-from nonebot_plugin_alconna import on_alconna
-from nonebot_plugin_alconna.uniseg import UniMessage
-
-pip = on_alconna(
-    Alconna(
-        "pip",
-        Subcommand(
-            "install",
-            Args["package", str],
-            Option("-r|--requirement", Args["file", str]),
-            Option("-i|--index-url", Args["url", str]),
-        ),
-    )
-)
-
-
-@pip.handle()
-async def _(result: Arparma):
-    package: str = result.other_args["package"]
-    logger.info(f"installing {package}")
-    await UniMessage.text(package).send()
-    
+   
 import nonebot
 from pathlib import Path
+import os 
 
-sub_plugins = nonebot.load_plugins(
-    str(Path(__file__).parent.joinpath("plugins").resolve())
+plugins = os.listdir(Path(__file__).parent / "plugins")
+load_plugins = []
+for plugin in plugins:
+    load_plugins.append(f"nonebot_plugin_yukikaze.plugins.{plugin}")
+
+sub_plugins = nonebot.load_all_plugins(
+    load_plugins,[]
 )
+from nonebot import on_command
 
-a = nonebot.on_command("test")
-@a.handle()
+help_cmd = on_command("雪风帮助", aliases={"帮助"}, priority=5)
+@help_cmd.handle()
 async def _():
-    plugins = ""
-    for i in sub_plugins:
-        plugins += f"{i}\n"
-    await a.send(plugins)
+    await help_cmd.finish()
