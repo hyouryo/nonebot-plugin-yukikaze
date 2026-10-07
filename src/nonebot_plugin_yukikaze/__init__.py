@@ -31,12 +31,12 @@ load_plugins = []
 for plugin in plugins:
     load_plugins.append(f"nonebot_plugin_yukikaze.plugins.{plugin}")
 
-sub_plugins = nonebot.load_all_plugins(
-    load_plugins,[]
-)
+sub_plugins = nonebot.load_all_plugins(load_plugins, [])
 from nonebot import on_command
 
 help_cmd = on_command("雪风帮助", aliases={"帮助"}, priority=5)
+
+
 @help_cmd.handle()
 async def _():
     await help_cmd.finish()

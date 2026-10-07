@@ -1,12 +1,12 @@
 import base64
-from pathlib import Path
 from random import choice
+from pathlib import Path
 
-from nonebot import get_plugin_config, on_notice
-from nonebot.adapters.onebot.v11 import MessageSegment, PokeNotifyEvent
+from nonebot import on_notice, get_plugin_config
 from nonebot.log import logger
-from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
+from nonebot.plugin import PluginMetadata
+from nonebot.adapters.onebot.v11 import MessageSegment, PokeNotifyEvent
 
 from .config import Config
 
@@ -25,7 +25,7 @@ poke_cmd = on_notice(priority=5, rule=rule)
 
 
 @poke_cmd.handle()
-async def _(event: PokeNotifyEvent) -> None:  # noqa: ARG001
+async def _(event: PokeNotifyEvent) -> None:
     gif = [
         "ok.gif",
         "问号.gif",
