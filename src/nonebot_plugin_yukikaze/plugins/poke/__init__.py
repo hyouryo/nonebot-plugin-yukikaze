@@ -1,62 +1,33 @@
-import base64
-from random import choice
+"""戳一戳：回一张随机的表情包。
+
+表情包清单不再逐个写死在 handler 里，而是启动时扫描 ``src/gif`` 目录得到；
+编码结果按 LRU 缓存，回复时只做一次字典查找。
+"""
+
 from pathlib import Path
 
-from nonebot import on_notice, get_plugin_config
-from nonebot.log import logger
+from nonebot import on_notice
 from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import MessageSegment, PokeNotifyEvent
 
-from .config import Config
+from .pool import ImagePool
 
 __plugin_meta__ = PluginMetadata(
     name="poke",
-    description="",
-    usage="",
-    config=Config,
+    description="被戳一戳时回一张随机表情包",
+    usage="戳一戳机器人（需要 @ 或私聊）",
+    type="application",
+    homepage="https://github.com/hyouryo/nonebot-plugin-yukikaze",
+    supported_adapters={"~onebot.v11"},
 )
 
-config = get_plugin_config(Config)
+#: 表情包池，只缓存最近用到的 8 张，避免 3 MB 素材全部常驻内存
+gifs = ImagePool(Path(__file__).parent / "src" / "gif", cache_size=8)
 
-rule = to_me()
-
-poke_cmd = on_notice(priority=5, rule=rule)
+poke_cmd = on_notice(priority=5, rule=to_me())
 
 
 @poke_cmd.handle()
 async def _(event: PokeNotifyEvent) -> None:
-    gif = [
-        "ok.gif",
-        "问号.gif",
-        "不愧是我.gif",
-        "交给我吧.gif",
-        "呃呃.gif",
-        "哇~.gif",
-        "哼哼.gif",
-        "好耶.gif",
-        "心碎.gif",
-        "生气.gif",
-        "脸红.gif",
-        "茉子Ciallo.gif",
-        "诶？！.gif",
-        "可爱.gif",
-        "呆.gif",
-        "哭哭.gif",
-        "啊哈哈.gif",
-        "害羞.gif",
-        "流汗.gif",
-        "笨蛋笨蛋.gif",
-        "芳乃Ciallo.gif",
-        "蕾娜Ciallo.gif",
-        "谢谢.gif",
-        "zzz.gif",
-        "丛雨Ciallo.gif",
-    ]
-    src = Path(__file__).parent / "src" / "gif" / choice(gif)
-    logger.info(f"{src}")
-    with src.open("rb") as src:
-        base64_str = base64.b64encode(src.read()).decode()
-        base64_str = f"base64://{base64_str}"
-        message = MessageSegment.image(base64_str)
-        await poke_cmd.send(message, at_sender=True)
+    await poke_cmd.send(MessageSegment.image(gifs.random_uri()), at_sender=True)

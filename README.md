@@ -15,7 +15,20 @@
 
 ## 📖 介绍
 
-这里是插件的详细介绍部分
+自用的雪风机器人，把几个常用小功能打包成一个插件：
+
+| 功能 | 说明 |
+| :--- | :--- |
+| `poke` | 被戳一戳时回一张随机表情包 |
+| `get_song` | 点歌，发网易云音乐卡片 |
+| `no_talking_laughing` | 有人被禁言时随机说一句风凉话 |
+
+每个功能都是独立的**子插件**，可以通过配置项单独开关，也可以在
+`雪风帮助` 里看到当前启用了哪些。
+
+> ⚠️ 三个功能都基于 OneBot v11 的扩展事件（`PokeNotifyEvent` /
+> `GroupBanNoticeEvent` / 自定义音乐卡片），因此**只支持 OneBot v11**
+> （如 Lagrange、NapCat 等）。
 
 ## 💿 安装
 
@@ -70,37 +83,38 @@
 
 </details>
 
-<details>
-<summary>使用 nbr 安装(使用 uv 管理依赖可用)</summary>
-
-[nbr](https://github.com/fllesser/nbr) 是一个基于 uv 的 nb-cli，可以方便地管理 nonebot2
-
-    nbr plugin install nonebot-plugin-yukikaze
-使用 **pypi** 源安装
-
-    nbr plugin install nonebot-plugin-yukikaze -i "https://pypi.org/simple"
-使用**清华源**安装
-
-    nbr plugin install nonebot-plugin-yukikaze -i "https://pypi.tuna.tsinghua.edu.cn/simple"
-
-</details>
-
-
 ## ⚙️ 配置
 
-在 nonebot2 项目的`.env`文件中添加下表中的必填配置
+在 nonebot2 项目的 `.env` 文件中添加下表中的配置项。
+**配置名就是字段名的大写形式**，全部可选。
 
-| 配置项  | 必填  | 默认值 |   说明   |
-| :-----: | :---: | :----: | :------: |
-| 配置项1 |  是   |   无   | 配置说明 |
-| 配置项2 |  否   |   无   | 配置说明 |
+| 配置项 | 必填 | 默认值 | 说明 |
+| :--- | :---: | :---: | :--- |
+| `YUKIKAZE_POKE_ENABLED` | 否 | `true` | 是否启用戳一戳回图 |
+| `YUKIKAZE_SONG_ENABLED` | 否 | `true` | 是否启用点歌 |
+| `YUKIKAZE_NO_TALKING_LAUGHING_ENABLED` | 否 | `true` | 是否启用禁言播报 |
+| `YUKIKAZE_SONG_LEVEL` | 否 | `exhigh` | 点歌音质，可选 `standard`/`higher`/`exhigh`/`lossless`/`hires`/`sky` |
+| `YUKIKAZE_SONG_COOKIE` | 否 | 空 | 网易云 cookie（`MUSIC_U=...`）。留空为匿名，只能取到无需会员的歌曲 |
+| `YUKIKAZE_NO_TALKING_LAUGHING_TEXTS` | 否 | 空 | 禁言播报的文案，JSON 数组，如 `["哈哈","笑死"]`。留空用内置 4 条 |
+
+例如只保留点歌、并且用无损音质：
+
+```dotenv
+YUKIKAZE_POKE_ENABLED=false
+YUKIKAZE_NO_TALKING_LAUGHING_ENABLED=false
+YUKIKAZE_SONG_LEVEL=lossless
+```
 
 ## 🎉 使用
+
 ### 指令表
-| 指令  | 权限  | 需要@ | 范围  |   说明   |
-| :---: | :---: | :---: | :---: | :------: |
-| 指令1 | 主人  |  否   | 私聊  | 指令说明 |
-| 指令2 | 群员  |  是   | 群聊  | 指令说明 |
+
+| 指令 | 权限 | 需要@ | 范围 | 说明 |
+| :--- | :---: | :---: | :---: | :--- |
+| `雪风帮助` / `帮助` | 群员 | 否 | 群聊/私聊 | 列出当前已启用的功能 |
+| `点歌 <歌曲名>` | 群员 | 否 | 群聊/私聊 | 搜索并发送网易云音乐卡片 |
+| 戳一戳机器人 | 群员 | 是 | 群聊/私聊 | 回一张随机表情包（需 @ 或私聊） |
+| 群成员被禁言 | — | 是 | 群聊 | 自动播报一句风凉话（需 @ 或私聊） |
 
 ### 🎨 效果图
-如果有效果图的话
+点歌会发送自定义音乐卡片；戳一戳回复 `plugins/poke/src/gif/` 下的表情包。

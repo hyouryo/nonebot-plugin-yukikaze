@@ -183,3 +183,13 @@ config/
 
 .DS_Store
 junit.xml
+
+# pytest 临时目录（conftest 里把 tmp_path 重定向到工作区内）
+.pytest_tmp/
+
+# pytest / pytest-xdist 的编号临时目录（系统 temp 不可写时会落在工作区）
+pytest-of-*/
+
+# 插件测试使用
+bot.py
+.env

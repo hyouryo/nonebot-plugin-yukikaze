@@ -8,12 +8,13 @@ authors = [{ name = "hyouryo", email = "hyouryo@gmail.com" }]
 dependencies = [
   "aiohttp>=3.13.3",
   "httpx>=0.27.0,<1.0.0",
+  "ncm-api-py>=0.1.0",
   "nonebot-adapter-onebot>=2.4.6",
   "nonebot-plugin-alconna>=0.60.0,<1.0.0",    # 跨平台命令解析拓展
   "nonebot-plugin-apscheduler>=0.5.0,<1.0.0", # 定时任务
   "nonebot-plugin-localstore>=0.7.4,<1.0.0",  # 存储文件
   "nonebot-plugin-uninfo>=0.10.0,<1.0.0",     # 多平台用户信息获取
-  "nonebot2>=2.4.3,<3.0.0",
+  "nonebot2[fastapi]>=2.4.3,<3.0.0",
 ]
 
 [project.urls]
@@ -43,8 +44,16 @@ test = [
 requires = ["uv_build>=0.10.0,<0.11.0"]
 build-backend = "uv_build"
 
+# 国内镜像对新发布的包有同步延迟：ncm-api-py 0.1.0 已发到 PyPI，但清华 /
+# 阿里镜像仍返回 404。这里把它单独钉到官方 PyPI（其余依赖照旧走默认镜像），
+# 免得本地和 CI 解析失败。镜像同步之后这两段可以删掉。
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
 [tool.uv.sources]
 nonebug = { git = "https://github.com/nonebot/nonebug" }
+ncm-api-py = { index = "pypi" }
 
 [tool.bumpversion]
 current_version = "0.1.0"
